@@ -11,6 +11,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from Book_Link_Scraper import BookLinkScraper
 import sys
+import re
 
 class Ui_MainWindow(object): # UI defined with help of QT Designer
     def setupUi(self, MainWindow):
@@ -59,10 +60,16 @@ class Ui_MainWindow(object): # UI defined with help of QT Designer
     def fetch(self): # Get bookname and author name and send it to the scrapy module for searching and scraping
         bookName = self.bookNameTextbox.text()
         authorName = self.authorNameTextbox.text()
-        linkScraper = BookLinkScraper()
-        linkScraper.begin(bookName, authorName)
-        if linkScraper.get_list_length() == 0:
-            self.show_error("No matches found")
+        authorName = re.split(';|,| ',authorName) #Get the different words in the author name list
+        authorName = [x.lower() for x in authorName if x] # Convert it to lower case and filter out empty strings
+        authorName = set(authorName) # Add to set
+        if bookName == '':
+            self.show_error('Pleae provide atleast one book name')
+        else:
+            linkScraper = BookLinkScraper()
+            linkScraper.begin(bookName, authorName)
+            if linkScraper.get_list_length() == 0:
+                self.show_error("No matches found")
     
     def show_error(self, msg): # show an error message on the error dialog
         self.error_dialog.setText(msg)

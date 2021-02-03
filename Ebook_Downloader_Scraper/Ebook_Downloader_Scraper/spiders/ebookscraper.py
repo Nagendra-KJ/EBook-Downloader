@@ -30,8 +30,11 @@ class EbookScraper(scrapy.Spider):
         authors=[]
         for author_div in list_authors_divs:
             response = scrapy.http.HtmlResponse(url="my url", body=author_div, encoding="utf-8")
-            authors.append(response.xpath("//div[contains(@class, 'authors')]/a/text()").extract())
-            
+            temp_list = response.xpath("//div[contains(@class, 'authors')]/a/text()").extract() # Get a temporary list of authors
+            author_set= set()
+            for name in temp_list:
+                author_set = author_set.union(set(name.lower().split(' '))) # Append each word in the list to a set
+            authors.append(author_set) # Append the entire set to the list of authors
 
         #Keep only those files that are present in list counter
 
@@ -41,11 +44,11 @@ class EbookScraper(scrapy.Spider):
         list_format = [(x.split(', '))[0] for x in list_files]
         list_size = [(x.split(', '))[1] for x in list_files]
 
-        # Add it to the list with Item container and skip if they are in PDF, not in English or do not match the author
+        # Add it to the list with Item container and skip if they are in PDF, not in English or do not match the author names
 
         for [idx, link] in enumerate(list_links):
             items["link"] = list_links[idx]
-            if (self.author_name != '' and self.author_name not in authors[idx]) or list_languages[idx] != 'english' or list_format[idx] == 'PDF':
+            if (self.author_name != set() and len(self.author_name.intersection(authors[idx])) <= 0) or list_languages[idx] != 'english' or list_format[idx] == 'PDF':
                 continue
             items["author"] = authors[idx]
             items["language"] = list_languages[idx]

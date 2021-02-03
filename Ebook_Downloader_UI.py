@@ -9,13 +9,8 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from twisted.internet import reactor, defer
-import scrapy
-from scrapy.crawler import CrawlerRunner
-from scrapy.utils.project import get_project_settings
-from multiprocessing import Process, Queue
-from Ebook_Downloader_Scraper.Ebook_Downloader_Scraper.spiders.ebookscraper import EbookScraper
-import json
+from Book_Link_Scraper import BookLinkScraper
+import sys
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -41,7 +36,9 @@ class Ui_MainWindow(object):
         self.pushButton.setGeometry(QtCore.QRect(330, 230, 121, 61))
         self.pushButton.setObjectName("pushButton")
         self.pushButton.clicked.connect(self.fetch)
-        self.error_dialog = QtWidgets.QErrorMessage()
+        self.error_dialog = QtWidgets.QMessageBox()
+        self.error_dialog.setIcon(QtWidgets.QMessageBox.Critical)
+        self.error_dialog.setWindowTitle("Error")
         MainWindow.setCentralWidget(self.centralwidget)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
@@ -62,34 +59,19 @@ class Ui_MainWindow(object):
     def fetch(self):
         bookName = self.bookNameTextbox.text()
         authorName = self.authorNameTextbox.text()
-        begin(bookName, authorName)
+        linkScraper = BookLinkScraper()
+        linkScraper.begin(bookName, authorName)
+        if linkScraper.get_list_length() == 0:
+            self.show_error("No matches found")
     
     def show_error(self, msg):
-        self.error_dialog.showMessage(msg)
+        self.error_dialog.setText(msg)
+        self.error_dialog.exec_()
 
-
-def run(q, bookName, authorName):
-    try:
-        custom_settings={
-            'FEEDS':{
-                'result.json':{'format':'json',
-                                'overwrite':True}
-            }
-        }
-        runner = CrawlerRunner(custom_settings)
-        deferred = runner.crawl(EbookScraper, author_name=authorName, book_name=bookName)
-        deferred.addBoth(lambda _: reactor.stop())
-        reactor.run()
-        q.put(None)
-    except Exception as e:
-        q.put(e)
-
-def begin(bookName, authorName):
-    print('Fetching ', bookName)
-    q = Queue()
-    p = Process(target=run, args=(q,bookName,authorName))
-    p.start()
-    result = q.get()
-    p.join() 
-    if result is not None:
-        raise result
+if __name__ == "__main__":
+    app = QtWidgets.QApplication(sys.argv)
+    MainWindow = QtWidgets.QMainWindow()
+    ui = Ui_MainWindow()
+    ui.setupUi(MainWindow)
+    MainWindow.show()
+    sys.exit(app.exec_())

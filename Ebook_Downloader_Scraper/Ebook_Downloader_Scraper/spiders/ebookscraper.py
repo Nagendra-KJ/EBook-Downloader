@@ -44,6 +44,14 @@ class EbookScraper(scrapy.Spider):
         list_format = [(x.split(', '))[0] for x in list_files]
         list_size = [(x.split(', '))[1] for x in list_files]
 
+        for [idx,siz] in enumerate(list_size):
+            [siz, unit] = siz.split(' ')
+            siz = float(siz)
+            if unit == 'MB':
+                siz = siz*1024
+            siz = int(siz)
+            list_size[idx] = siz
+
         # Add it to the list with Item container and skip if they are in PDF, not in English or do not match the author names
 
         for [idx, link] in enumerate(list_links):

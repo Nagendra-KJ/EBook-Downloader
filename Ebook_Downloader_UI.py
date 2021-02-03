@@ -12,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from Book_Link_Scraper import BookLinkScraper
 import sys
 
-class Ui_MainWindow(object):
+class Ui_MainWindow(object): # UI defined with help of QT Designer
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(800, 600)
@@ -48,7 +48,7 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
 
-    def retranslateUi(self, MainWindow):
+    def retranslateUi(self, MainWindow): # Auto generated code
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "EBook Downloader"))
         self.bookNameLabel.setText(_translate("MainWindow", "Book Name"))
@@ -56,7 +56,7 @@ class Ui_MainWindow(object):
         self.pushButton.setText(_translate("MainWindow", "Fetch"))
 
     
-    def fetch(self):
+    def fetch(self): # Get bookname and author name and send it to the scrapy module for searching and scraping
         bookName = self.bookNameTextbox.text()
         authorName = self.authorNameTextbox.text()
         linkScraper = BookLinkScraper()
@@ -64,11 +64,11 @@ class Ui_MainWindow(object):
         if linkScraper.get_list_length() == 0:
             self.show_error("No matches found")
     
-    def show_error(self, msg):
+    def show_error(self, msg): # show an error message on the error dialog
         self.error_dialog.setText(msg)
         self.error_dialog.exec_()
 
-if __name__ == "__main__":
+if __name__ == "__main__": # run the app
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()

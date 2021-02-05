@@ -3,8 +3,7 @@ import scrapy
 from ..items import EbookItem
 
 class EbookScraper(scrapy.Spider):
-    name = "ebook"
-    
+    name='ebook'    
 
     def __init__(self, book_name='', author_name='', **kwargs): # Set Search url to b-ok.asia/s/book_name
         self.start_urls = [f'https://b-ok.asia/s/{book_name}']
@@ -14,6 +13,7 @@ class EbookScraper(scrapy.Spider):
 
 
     def parse(self, response):
+        print('Inside Parse')
 
         items = EbookItem() # Create an ebook item
 
@@ -56,12 +56,13 @@ class EbookScraper(scrapy.Spider):
 
         for [idx, link] in enumerate(list_links):
             items["link"] = list_links[idx]
-            if (self.author_name != set() and len(self.author_name.intersection(authors[idx])) <= 0) or list_languages[idx] != 'english' or list_format[idx] == 'PDF':
+            if (self.author_name != set() and len(self.author_name.intersection(authors[idx])) <= 0) or list_languages[idx] != 'english' or (list_format[idx] != 'EPUB' and list_format[idx] !='MOBI '):
                 continue
             items["author"] = authors[idx]
-            items["language"] = list_languages[idx]
-            items["format"] = list_format[idx]
+            items["language"] = list_languages[idx].strip()
+            items["format"] = list_format[idx].strip()
             items["size"] = list_size[idx]
+            print('Yielding')
             yield items            
 
         

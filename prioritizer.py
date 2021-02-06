@@ -3,7 +3,6 @@ import operator
 
 class Prioritizer:
     def prioritize(self, path):
-        print('Inside the prioritizer')
         with open("result.json", "r") as json_file:
             list_of_books = json.load(json_file)
             list_of_books.sort(key=lambda x: (x['format'], x['size']), reverse=True)

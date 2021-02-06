@@ -13,8 +13,6 @@ class EbookScraper(scrapy.Spider):
 
 
     def parse(self, response):
-        print('Inside Parse')
-
         items = EbookItem() # Create an ebook item
 
         #Xpath for the counter parameter. links, author, languages, files
@@ -62,7 +60,6 @@ class EbookScraper(scrapy.Spider):
             items["language"] = list_languages[idx].strip()
             items["format"] = list_format[idx].strip()
             items["size"] = list_size[idx]
-            print('Yielding')
             yield items            
 
         

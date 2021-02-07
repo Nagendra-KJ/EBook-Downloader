@@ -12,6 +12,8 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from Book_Link_Scraper import BookLinkScraper
 from Download_Link_Scraper import DownloadLinkScraper
 from Prioritizer import Prioritizer
+from Converter import Converter
+from Emailer import Emailer
 import sys
 import re
 
@@ -81,10 +83,13 @@ class Ui_MainWindow(object): # UI defined with help of QT Designer
 
             downloader = DownloadLinkScraper()
             status = downloader.begin()
+            #status = "Success"
             if status == "Limit Reached":
                 self.show_error('Download cannot be completed due to limits')
             elif status == "Success":
-                self.show_message("Download Complete")
+                Converter().convert(bookName)
+                Emailer().send(bookName)
+                self.show_message("Process Complete")
 
     
     def show_error(self, msg): # show an error message on the error dialog

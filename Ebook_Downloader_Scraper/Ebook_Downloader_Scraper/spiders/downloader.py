@@ -1,6 +1,7 @@
 from selenium import webdriver
 import os.path
 import pathlib
+import time
 
 class Downloader():
     def setup(self, start_urls):
@@ -32,17 +33,9 @@ class Downloader():
             try:
                 failed_check = self.driver.find_element_by_class_name('recommended-plan-ribbon')
                 print("Failed due to excess file downloads")
-                #self.driver.close()
                 return "Limit Reached"
             except:
-                os.chdir(download_dir)
-                downloading = True
-                while downloading:
-                    for fname in os.listdir('.'):
-                        if fname.endswith('.part'):
-                            downloading = True
-                        else:
-                            downloading = False
-                return "Success"
+               time.sleep(30)
+               return "Success"
         except Exception as e:
             return "Fail"

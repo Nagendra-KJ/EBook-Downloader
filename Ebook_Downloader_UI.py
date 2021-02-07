@@ -10,7 +10,8 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from Book_Link_Scraper import BookLinkScraper
-from prioritizer import Prioritizer
+from Download_Link_Scraper import DownloadLinkScraper
+from Prioritizer import Prioritizer
 import sys
 import re
 
@@ -41,6 +42,9 @@ class Ui_MainWindow(object): # UI defined with help of QT Designer
         self.error_dialog = QtWidgets.QMessageBox()
         self.error_dialog.setIcon(QtWidgets.QMessageBox.Critical)
         self.error_dialog.setWindowTitle("Error")
+        self.msg_dialog = QtWidgets.QMessageBox()
+        self.msg_dialog.setIcon(QtWidgets.QMessageBox.Information)
+        self.msg_dialog.setWindowTitle("Information")
         MainWindow.setCentralWidget(self.centralwidget)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
@@ -68,16 +72,28 @@ class Ui_MainWindow(object): # UI defined with help of QT Designer
             self.show_error('Please provide atleast one book name')
         else:
             linkScraper = BookLinkScraper()
-            path = linkScraper.begin(bookName, authorName)
+            linkScraper.begin(bookName, authorName)
             if linkScraper.get_list_length() == 0:
                 self.show_error("No matches found")
                 return
             prioritizer = Prioritizer()
-            prioritizer.prioritize(path)
+            prioritizer.prioritize()
+
+            downloader = DownloadLinkScraper()
+            status = downloader.begin()
+            if status == "Limit Reached":
+                self.show_error('Download cannot be completed due to limits')
+            elif status == "Success":
+                self.show_message("Download Complete")
+
     
     def show_error(self, msg): # show an error message on the error dialog
         self.error_dialog.setText(msg)
         self.error_dialog.exec_()
+    
+    def show_message(self, msg):
+        self.msg_dialog.setText(msg)
+        self.msg_dialog.exec_()
 
 if __name__ == "__main__": # run the app
     app = QtWidgets.QApplication(sys.argv)

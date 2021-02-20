@@ -82,8 +82,7 @@ class Ui_MainWindow(object): # UI defined with help of QT Designer
             prioritizer.prioritize()
 
             downloader = DownloadLinkScraper()
-            #status = downloader.begin()
-            status = 'Success'
+            status = downloader.begin()
             if status == "Limit Reached":
                 self.show_error('Download cannot be completed due to limits')
             elif status == "Success":

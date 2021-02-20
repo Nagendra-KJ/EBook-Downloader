@@ -25,6 +25,7 @@ class Downloader():
     def download(self, url):
         self.driver.get(url)
         dlButton = self.driver.find_element_by_class_name('dlButton')
+        failed_check = None
         try:
             dlButton.click()
             time.sleep(20)
@@ -36,6 +37,8 @@ class Downloader():
             else:
                 return "Success"
         except Exception as e:
-            print(e)
-            return "Fail"
-        return "Fail"
+            if failed_check == None:
+                return "Success"
+            else:
+                print(e)
+                return "Fail"

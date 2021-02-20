@@ -4,6 +4,7 @@ import yagmail
 
 class Emailer:
     def send(self, bookName):
+        print('Sending email')
         receiver = 'Send2n0gs@kindle.com'
         body = ''
         download_dir = os.path.join(pathlib.Path().absolute(),'downloads')

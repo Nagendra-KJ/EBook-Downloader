@@ -514,3 +514,9 @@ JavaScript error: resource://gre/modules/XULStore.jsm, line 66: Error: Can't fin
 
 ###!!! [Child][RunMessage] Error: Channel closing: too late to send/recv, messages will be lost
 
+1613072394180	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "-marionette" "-foreground" "-no-remote" "-profile" "C:\\Users\\NAGEND~1\\AppData\\Local\\Temp\\rust_mozprofile.H0bscs56CJgX"
+JavaScript error: resource://gre/modules/XULStore.jsm, line 66: Error: Can't find profile directory.
+1613072395899	Marionette	INFO	Listening on port 54450
+1613072396202	Marionette	WARN	TLS certificate errors will be ignored for this session
+1613072396214	Marionette	ERROR	[21] No reply from Marionette:Register
+1613072449778	Marionette	WARN	Ignoring event 'DOMContentLoaded' because document has an invalid readyState of 'complete'.

@@ -14,6 +14,7 @@ from Download_Link_Scraper import DownloadLinkScraper
 from Prioritizer import Prioritizer
 from Converter import Converter
 from Emailer import Emailer
+from Remover import Remover
 import sys
 import re
 
@@ -88,6 +89,7 @@ class Ui_MainWindow(object): # UI defined with help of QT Designer
             elif status == "Success":
                 Converter().convert(bookName)
                 Emailer().send(bookName)
+                Remover().remove()
                 self.show_message("Process Complete")
 
     

@@ -15,8 +15,12 @@ from Prioritizer import Prioritizer
 from Converter import Converter
 from Emailer import Emailer
 from Remover import Remover
+from pathlib import Path
+import os
 import sys
 import re
+
+global download_path
 
 class Ui_MainWindow(object): # UI defined with help of QT Designer
     def setupUi(self, MainWindow):
@@ -38,6 +42,17 @@ class Ui_MainWindow(object): # UI defined with help of QT Designer
         self.authorNameTextbox = QtWidgets.QLineEdit(self.centralwidget)
         self.authorNameTextbox.setGeometry(QtCore.QRect(130, 120, 651, 22))
         self.authorNameTextbox.setObjectName("authorNameTextbox")
+        self.pathLabel = QtWidgets.QLabel(self.centralwidget)
+        self.pathLabel.setGeometry(QtCore.QRect(30,170,81,41))
+        self.pathLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.pathLabel.setObjectName("pathLabel")
+        self.pathTexbox = QtWidgets.QLineEdit(self.centralwidget)
+        self.pathTexbox.setGeometry(QtCore.QRect(130,170,500,22))
+        self.pathTexbox.setObjectName("pathTextbox")
+        self.browseButton = QtWidgets.QPushButton(self.centralwidget)
+        self.browseButton.setGeometry(QtCore.QRect(681,170,100,22))
+        self.browseButton.setObjectName("browseButton")
+        self.browseButton.clicked.connect(self.browse)
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton.setGeometry(QtCore.QRect(330, 230, 121, 61))
         self.pushButton.setObjectName("pushButton")
@@ -58,14 +73,20 @@ class Ui_MainWindow(object): # UI defined with help of QT Designer
 
 
     def retranslateUi(self, MainWindow): # Auto generated code
+        global download_path
+        download_path = os.path.join(Path().absolute(),'downloads')
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "EBook Downloader"))
         self.bookNameLabel.setText(_translate("MainWindow", "Book Name"))
         self.authorNameLabel.setText(_translate("MainWindow", "Author Name"))
+        self.pathLabel.setText(_translate("MainWindow", "Path"))
         self.pushButton.setText(_translate("MainWindow", "Fetch"))
+        self.browseButton.setText(_translate("MainWindow", "Browse"))
+        self.pathTexbox.setText(_translate("MainWindow", download_path))
 
     
     def fetch(self): # Get bookname and author name and send it to the scrapy module for searching and scraping
+        global download_path
         bookName = self.bookNameTextbox.text()
         authorName = self.authorNameTextbox.text()
         authorName = re.split(';|,| ',authorName) #Get the different words in the author name list
@@ -82,15 +103,23 @@ class Ui_MainWindow(object): # UI defined with help of QT Designer
             prioritizer = Prioritizer()
             prioritizer.prioritize()
 
-            downloader = DownloadLinkScraper()
+            downloader = DownloadLinkScraper(download_path)
             status = downloader.begin()
+            status = "Success"
             if status == "Limit Reached":
                 self.show_error('Download cannot be completed due to limits')
             elif status == "Success":
-                Converter().convert(bookName)
-                Emailer().send(bookName)
-                Remover().remove()
+                Converter().convert(book_name=bookName, download_dir=download_path)
+                Emailer().send(bookName, download_dir=download_path)
+                Remover().remove(download_dir=download_path)
                 self.show_message("Process Complete")
+
+    def browse(self):
+        global download_path
+        fname = QtWidgets.QFileDialog.getExistingDirectory(self.centralwidget, 'Open File',download_path)
+        download_path = os.path.join(fname,'downloads')
+        download_path = os.path.abspath(download_path)
+        self.pathTexbox.setText(download_path)
 
     
     def show_error(self, msg): # show an error message on the error dialog

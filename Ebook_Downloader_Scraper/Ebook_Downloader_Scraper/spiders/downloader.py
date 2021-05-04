@@ -5,8 +5,11 @@ import pathlib
 import time
 
 class Downloader():
+    def __init__(self, download_path):
+        self.download_path = download_path
+
     def setup(self, start_urls):
-        download_dir = os.path.join(pathlib.Path().absolute(),'downloads')
+        download_dir = self.download_path
         self.start_urls = start_urls
         chromeOptions = webdriver.ChromeOptions()
         prefs = {'download.default_directory':download_dir}
@@ -32,7 +35,6 @@ class Downloader():
             failed_check = None
             failed_check = self.driver.find_element_by_class_name('recommended-plan-ribbon')
             if(failed_check != None):
-                print("Failed due to excess file downloads")
                 return "Limit Reached"
             else:
                 return "Success"

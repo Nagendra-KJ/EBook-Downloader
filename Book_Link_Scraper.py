@@ -25,7 +25,6 @@ class BookLinkScraper:
             q.put(e)
 
     def begin(self,bookName, authorName):
-        print('Fetching ', bookName)
         q = Queue()
         p = Process(target=self.run, args=(q,bookName,authorName))
         p.start()

@@ -9,9 +9,8 @@ EMAIL_KINDLE = os.environ.get('KINDLE_EMAIL')
 
 
 class Emailer:
-    def send(self, bookName):
+    def send(self, bookName, download_dir):
         print('Sending email')
-        download_dir = os.path.join(pathlib.Path().absolute(),'downloads')
         attach_file_name = os.path.join(download_dir, f'{bookName}.mobi')
         attach_file_name.replace('\\','/')
         msg = EmailMessage()

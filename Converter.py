@@ -3,9 +3,7 @@ import subprocess
 import pathlib
 
 class Converter:
-    def convert(self, book_name='ebook'):
-        print('Trying to convert now')
-        download_dir = os.path.join(pathlib.Path().absolute(),'downloads')
+    def convert(self, download_dir, book_name='ebook'):
         epubExt = r"*.epub"
         fileList = list(pathlib.Path(download_dir).glob(epubExt))
         fileList = [str(x) for x in fileList]
